@@ -1,3 +1,4 @@
+require 'pry'
 # Write a program that models the behaviour of the given vehicles.
 #
 # Requirements:
@@ -10,37 +11,72 @@
 
 # This describes a vehicle that drives if all required components are present
 class Vehicle
-  attr_accessor :components,
-                :requirements
+  attr_reader :components,
+              :requirements
 
   Component = Struct.new(:amount, :size)
   Requirement = Struct.new(:amount, :size)
 
-  def initialize(args)
-    @body = Component.new(args[:body_amount], args[:body_size])
-    @engine = Component.new(args[:engine_amount], args[:engine_size])
-    @wheels = Component.new(args[:wheel_amount], args[:wheel_size])
-    @components = {
-      body: @body,
-      engine: @engine,
-      wheels: @wheels
-    }
+  def initialize(body_amount:,
+                 body_size:,
+                 engine_amount:,
+                 engine_size:,
+                 wheel_amount:,
+                 wheel_size:)
 
-    @body_requirement = Requirement.new(1, 'medium')
-    @engine_requirement = Requirement.new(1, 'medium')
-    @wheels_requirement = Requirement.new(4, 'medium')
-    @requirements = {
-      body: @body_requirement,
-      engine: @engine_requirement,
-      wheels: @wheels_requirement
-    }
+    @components = componentize(body_amount: body_amount,
+                               body_size: body_size,
+                               engine_amount: engine_amount,
+                               engine_size: engine_size,
+                               wheel_amount: wheel_amount,
+                               wheel_size: wheel_size)
+
+    # Ruby's setter method doesn't play well with either multiple
+    # arguments or keyword arguments.
+    set_requirements
   end
 
   def drive
     all_requirements_met?
   end
 
+  def set_requirements(body_amount: 1,
+                       body_size: 'medium',
+                       engine_amount: 1,
+                       engine_size: 'medium',
+                       wheel_amount: 4,
+                       wheel_size: 'medium')
+
+    body = Requirement.new(body_amount, body_size)
+    engine = Requirement.new(engine_amount, engine_size)
+    wheels = Requirement.new(wheel_amount, wheel_size)
+
+    @requirements = {
+      body: body,
+      engine: engine,
+      wheels: wheels
+    }
+  end
+
   private
+
+  def componentize(body_amount:,
+                   body_size:,
+                   engine_amount:,
+                   engine_size:,
+                   wheel_amount:,
+                   wheel_size:)
+
+    body = Component.new(body_amount, body_size)
+    engine = Component.new(engine_amount, engine_size)
+    wheels = Component.new(wheel_amount, wheel_size)
+
+    {
+      body: body,
+      engine: engine,
+      wheels: wheels
+    }
+  end
 
   def all_requirements_met?
     results = components.keys.map do |key|
@@ -58,30 +94,36 @@ end
 
 # This describes a car that drives if all required components are present
 class Car < Vehicle
-  def initialize(args)
+  def initialize(body_amount:,
+                 body_size:,
+                 engine_amount:,
+                 engine_size:,
+                 wheel_amount:,
+                 wheel_size:)
     super
-    @body_requirement = Requirement.new(1, 'medium')
-    @engine_requirement = Requirement.new(1, 'medium')
-    @wheels_requirement = Requirement.new(4, 'medium')
-    @requirements = {
-      body: @body_requirement,
-      engine: @engine_requirement,
-      wheels: @wheels_requirement
-    }
+    set_requirements(body_amount: 1,
+                     body_size: 'medium',
+                     engine_amount: 1,
+                     engine_size: 'medium',
+                     wheel_amount: 4,
+                     wheel_size: 'medium')
   end
 end
 
 # This describes a motorcycle that drives if all required components are present
 class Motorcycle < Vehicle
-  def initialize(args)
+  def initialize(body_amount:,
+                 body_size:,
+                 engine_amount:,
+                 engine_size:,
+                 wheel_amount:,
+                 wheel_size:)
     super
-    @body_requirement = Requirement.new(1, 'small')
-    @engine_requirement = Requirement.new(2, 'small')
-    @wheels_requirement = Requirement.new(2, 'small')
-    @requirements = {
-      body: @body_requirement,
-      engine: @engine_requirement,
-      wheels: @wheels_requirement
-    }
+    set_requirements(body_amount: 1,
+                     body_size: 'small',
+                     engine_amount: 2,
+                     engine_size: 'small',
+                     wheel_amount: 2,
+                     wheel_size: 'small')
   end
 end
