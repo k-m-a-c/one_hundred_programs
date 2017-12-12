@@ -1,4 +1,3 @@
-require 'pry'
 # Write a program that models the behaviour of the given vehicles.
 #
 # Requirements:
